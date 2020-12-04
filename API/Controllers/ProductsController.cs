@@ -10,6 +10,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
+
+    /*
+    A controller exposes controller actions. An Action is a method on a controller that 
+    gets called when you enter a particular URL in your browser address bar.
+
+    A controller action returns something called an Action Result. An action result 
+    is what a controller action returns in response to a browser request.
+    */
+
     [ApiController]
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
@@ -19,19 +28,23 @@ namespace API.Controllers
         private readonly IGenericRepository<ProductBrand> _productBrandRepo;
         private readonly IGenericRepository<ProductType> _productTypeRepo;
 
-        public ProductsController(IGenericRepository<Product> productsRepo, IGenericRepository<ProductBrand> productBrandRepo, IGenericRepository<ProductType> productTypeRepo)
+        //inject implementations of generic repository
+        public ProductsController(IGenericRepository<Product> productsRepo, 
+        IGenericRepository<ProductBrand> productBrandRepo, IGenericRepository<ProductType> productTypeRepo)
         {
             _productTypeRepo = productTypeRepo;
             _productBrandRepo = productBrandRepo;
             _productsRepo = productsRepo;
         }
 
+        //url: api/products
+        //asynchronous request that doesn't block the thread
         [HttpGet]
         public async Task<ActionResult<List<Product>>> GetProducts()
         {
 
             var spec = new ProductsWithTypesAndBrandsSpecification();
-
+            
             var products = await _productsRepo.ListAsync(spec);
 
             return Ok(products);
