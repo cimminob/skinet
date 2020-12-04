@@ -1,3 +1,5 @@
+using API.Helpers;
+using AutoMapper;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
@@ -40,6 +42,7 @@ namespace API
 
             //Generic Repository service
             services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+            services.AddAutoMapper(typeof(MappingProfiles));
             services.AddControllers();
             services.AddDbContext<StoreContext>(x => x.UseSqlite(_config.GetConnectionString("DefaultConnection")));
         }
@@ -54,6 +57,9 @@ namespace API
             }
 
             app.UseHttpsRedirection();
+
+            //serve up static content such as images - must come before Routing!!!
+            app.UseStaticFiles();
 
             //ASP.NET Core controllers use the Routing middleware to match the URLs of 
             //incoming requests and map them to actions
