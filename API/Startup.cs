@@ -1,4 +1,6 @@
+using API.Extensions;
 using API.Helpers;
+using API.Middleware;
 using AutoMapper;
 using Core.Interfaces;
 using Infrastructure.Data;
@@ -7,7 +9,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace API
 {
@@ -37,7 +38,7 @@ namespace API
             AddSingleton - a singleton service is created when a request is made, but is never
             destroyed until the application shuts down.
             */
-            
+
             services.AddScoped<IProductRepository, ProductRepository>();
 
             //Generic Repository service
@@ -45,16 +46,20 @@ namespace API
             services.AddAutoMapper(typeof(MappingProfiles));
             services.AddControllers();
             services.AddDbContext<StoreContext>(x => x.UseSqlite(_config.GetConnectionString("DefaultConnection")));
+
+            services.AddApplicationServices();
+            services.AddSwaggerDocumentation();
         }
 
         //Middleware is added here
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+
+            //use our own custom exception middleware
+            app.UseMiddleware<ExceptionMiddleware>();
+
+            app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
             app.UseHttpsRedirection();
 
@@ -66,6 +71,9 @@ namespace API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseSwaggerDocumentation();
+
 
             /* 
             Endpoints are the app's units of executable request-handling code. Endpoints 
