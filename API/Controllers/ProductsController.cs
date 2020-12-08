@@ -45,10 +45,11 @@ namespace API.Controllers
         //url: api/products
         //asynchronous request that doesn't block the thread
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts()
+        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts(
+            [FromQuery]ProductSpecParams productSpecParams)
         {
 
-            var spec = new ProductsWithTypesAndBrandsSpecification();
+            var spec = new ProductsWithTypesAndBrandsSpecification(productSpecParams);
 
             var products = await _productsRepo.ListAsync(spec);
 

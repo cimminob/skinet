@@ -1,4 +1,5 @@
 
+using System.Linq;
 using System.Reflection;
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -24,13 +25,29 @@ namespace Infrastructure.Data
         public DbSet<ProductType> ProductTypes { get; set; }
 
         //Used to manually create a migration to configure an entity
-        protected override void OnModelCreating(ModelBuilder modelBuilder){
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
 
             //Call onModelCreating in base class DbContext which applies configuration 
             //from our ProductConfiguration class that implements IEntityTypeConfiguration<TEntity
 
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            if (Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+            {
+                foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+                {
+                    var properties = entityType.ClrType.GetProperties().Where(
+                        p => p.PropertyType == typeof(decimal)
+                    );
+
+                    foreach (var property in properties)
+                    {
+                        modelBuilder.Entity(entityType.Name).Property(property.Name).HasConversion<double>();
+                    }
+                }
+            }
         }
     }
 }

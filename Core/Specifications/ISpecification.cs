@@ -17,17 +17,28 @@ namespace Core.Specifications
     public interface ISpecification<T>
     {
 
-    /* System.LINQ.Expression Provides the base class from which the classes 
-    that represent expression tree nodes are derived.  
+        /* System.LINQ.Expression Provides the base class from which the classes 
+        that represent expression tree nodes are derived.  
 
-    Func<T,TResult> is a delegate that points to a method that accepts one 
-    or more arguments and returns a value
-    */
+        Func<T,TResult> is a delegate that points to a method that accepts one 
+        or more arguments and returns a value
+        */
 
         //represents an expression to test
         Expression<Func<T, bool>> Criteria { get; }
 
         //a list of Includes statements that represent queries
         List<Expression<Func<T, object>>> Includes { get; }
+
+        //ex: order by name
+        Expression<Func<T, object>> OrderBy { get; }
+
+        Expression<Func<T, object>> OrderByDescending { get; }
+
+        int Take { get;  }
+
+        int Skip { get; }
+
+        bool IsPagingEnabled { get; }
     }
 }
