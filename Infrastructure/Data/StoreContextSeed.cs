@@ -11,15 +11,18 @@ namespace Infrastructure.Data
     //This class is used to insert or seed data into the database
     public class StoreContextSeed
     {
-        public static async Task SeedAsync(StoreContext context, ILoggerFactory loggerFactory){
-            try{
+        public static async Task SeedAsync(StoreContext context, ILoggerFactory loggerFactory)
+        {
+            try
+            {
                 if (!context.ProductBrands.Any())
                 {
                     var brandsData = File.ReadAllText("../Infrastructure/Data/SeedData/brands.json");
 
                     var brands = System.Text.Json.JsonSerializer.Deserialize<List<ProductBrand>>(brandsData);
 
-                    foreach( var item in brands){
+                    foreach (var item in brands)
+                    {
                         context.ProductBrands.Add(item);
                     }
 
@@ -31,7 +34,9 @@ namespace Infrastructure.Data
 
                     var types = System.Text.Json.JsonSerializer.Deserialize<List<ProductType>>(typesData);
 
-                    foreach( var item in types){
+                    foreach (var item in types)
+                    {
+                        Console.WriteLine("type is " + item.Name);
                         context.ProductTypes.Add(item);
                     }
 
@@ -50,7 +55,9 @@ namespace Infrastructure.Data
 
                     await context.SaveChangesAsync();
                 }
-            } catch(Exception ex){
+            }
+            catch (Exception ex)
+            {
                 var logger = loggerFactory.CreateLogger<StoreContextSeed>();
                 logger.LogError(ex.Message);
             }

@@ -22,5 +22,8 @@ namespace Core.Interfaces
 
         //list of entities with specification
         Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec);
+
+        //counts the number of items
+        Task<int> CountAsync(ISpecification<T> spec);
     }
 }

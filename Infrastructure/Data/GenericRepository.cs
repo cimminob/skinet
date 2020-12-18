@@ -69,12 +69,10 @@ namespace Infrastructure.Data
             return await ApplySpecification(spec).FirstOrDefaultAsync();
         }
 
-
         public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec)
         {
             return await ApplySpecification(spec).ToListAsync();
         }
-
 
         //returns a queryable that matches the specification criteria. The queryable can 
         //then executed on a database in the above function calls.
@@ -82,6 +80,12 @@ namespace Infrastructure.Data
         {
             //T would be a product and is converted into a Queryable
             return SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(), spec);
+        }
+
+        //counts the number of items after the specification is applied
+        public async Task<int> CountAsync(ISpecification<T> spec)
+        {
+            return await ApplySpecification(spec).CountAsync();
         }
     }
 }
