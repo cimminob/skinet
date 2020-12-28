@@ -1,7 +1,10 @@
 using System;
 using System.Threading.Tasks;
+using Core.Entities.Identity;
 using Infrastructure.Data;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,18 +29,28 @@ namespace API
             USING creates a disposable object such that after the code
             in parenthesis is executed, the object is disposed of. 
 
-            */ 
-            using (var scope = host.Services.CreateScope()){
+            */
+            using (var scope = host.Services.CreateScope())
+            {
                 var services = scope.ServiceProvider;
                 var loggerFactory = services.GetRequiredService<ILoggerFactory>();
-                try {
+                try
+                {
                     var context = services.GetRequiredService<StoreContext>();
 
                     //applies any pending migrations to the database and creates it
                     //if it doesn't exist
                     await context.Database.MigrateAsync();
                     await StoreContextSeed.SeedAsync(context, loggerFactory);
-                } catch (Exception ex)
+
+                    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+                    var identityContext = services.GetRequiredService<AppIdentityDbContext>();
+
+                    await identityContext.Database.MigrateAsync();
+                    await AppIdentityDbContextSeed.SeedUsersAsync(userManager);
+
+                }
+                catch (Exception ex)
                 {
                     var logger = loggerFactory.CreateLogger<Program>();
                     logger.LogError(ex, "An error occured during Migration");
