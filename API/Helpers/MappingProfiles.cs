@@ -1,11 +1,12 @@
 using API.Dtos;
 using AutoMapper;
 using Core.Entities;
+using Core.Entities.Identity;
 
 namespace API.Helpers
 {
 
-        //MappingProfile is the configuration for the AutoMapper extension used with Dto
+    //MappingProfile is the configuration for the AutoMapper extension used with Dto
     public class MappingProfiles : Profile
     {
         public MappingProfiles()
@@ -21,6 +22,9 @@ namespace API.Helpers
                 .ForMember(d => d.ProductType, o => o.MapFrom(s => s.ProductType.Name))
                 //configure mapping of image url using ProductUrlResolver class
                 .ForMember(d => d.PictureUrl, o => o.MapFrom<ProductUrlResolver>());
+
+            CreateMap<Address, AddressDto>().ReverseMap();
+
         }
     }
 }
