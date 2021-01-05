@@ -23,8 +23,9 @@ namespace API.Helpers
                 //configure mapping of image url using ProductUrlResolver class
                 .ForMember(d => d.PictureUrl, o => o.MapFrom<ProductUrlResolver>());
 
-            CreateMap<Address, AddressDto>().ReverseMap();
+            CreateMap<Core.Entities.Identity.Address, AddressDto>().ReverseMap();
             CreateMap<CustomerBasketDto, CustomerBasket>();
+            CreateMap<AddressDto, Core.Entities.OrderAggregate.Address>();
             CreateMap<BasketItemDto, BasketItem>();
 
         }
