@@ -16,6 +16,7 @@ import { IProduct } from '../shared/models/product';
 })
 export class BasketService {
   baseUrl = environment.apiUrl;
+  //behavior subject necessary for multicasting
   private basketSource = new BehaviorSubject<IBasket>(null);
   basket$ = this.basketSource.asObservable();
   private basketTotalSource = new BehaviorSubject<IBasketTotals>(null);
